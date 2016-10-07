@@ -1,0 +1,8 @@
+{
+    "debug": true,
+    "rocketRouteConfig": {
+        "notamWsdl": "https://api.rocketroute.com/notam/v1/service.wsdl",
+		"user": "",
+        "password": ""
+    }
+}

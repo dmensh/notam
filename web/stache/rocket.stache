@@ -1,0 +1,5 @@
+<div id="map">
+</div>
+<div id="control" style="height:40px;">
+    <input type="text" placeholder="Enter Code">
+</div>

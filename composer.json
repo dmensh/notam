@@ -1,0 +1,17 @@
+{
+    "autoload-dev": {
+        "psr-4": {
+            "Rocket\\Task\\": "src/",
+            "Rocket\\Task\\Tests\\": "tests/src/"
+        }
+    },
+
+    "require": {
+        "silex/silex": "~2.0",
+        "reva2/config-service-provider": "^2.0"
+    },
+
+    "require-dev": {
+        "phpunit/phpunit": "^5.5"
+    }
+}
