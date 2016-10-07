@@ -73,8 +73,8 @@ class RocketRouteTest extends PHPUnit_Framework_TestCase
         $locations = $this->rocketRoute->searchNotam('UKKK');
         $this->assertEquals([
             [
-                'lat' => 50.24,
-                'lng' => 30.27,
+                'lat' => 50.40,
+                'lng' => 30.45,
                 'description' => 'OBST ERECTED CRANE.'
             ]
         ], $locations);

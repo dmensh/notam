@@ -68,16 +68,7 @@ class RocketRoute
             }
 
             $location = substr($location, 0, 11);
-            $lat = $this->normalizeCoordinate(substr($location, 0, 4));
-            $lng = $this->normalizeCoordinate(substr($location, 5, 5), 3);
-
-            if(substr($location, 4) == 'S') {
-                $lat = -$lat;
-            }
-
-            if(substr($location, 10) == 'W') {
-                $lng = -$lng;
-            }
+            list($lat, $lng) = $this->decodeCoordinate($location);
 
             $locations[] = [
                 'lat' => $lat,
@@ -90,16 +81,38 @@ class RocketRoute
     }
 
     /**
-     * Convert coordinate to float value
+     * Convert coordinate to latitude and longitude
      *
-     * @param string $str
-     * @param int $digits Number of significant digits
-     * @return float
+     * @param string $location
+     * @return array
      */
-    protected function normalizeCoordinate($str, $digits = 2)
+    protected function decodeCoordinate($location)
     {
-        $val = substr($str, 0, $digits).'.'.substr($str, $digits);
-        return (float) $val;
+        $parsed = $location;
+
+        $dLat = substr($location , 0 , 2);
+        $hLat = substr($location , 2 , 2 );
+
+        $parsed = substr($location, 4);
+        if (is_numeric(substr($location,-3))) {
+            $parsed = substr($parsed, 0, -3);
+        }
+
+        $hLng = substr(substr($parsed, -3), 0 , -1);
+        $dLng = substr(substr($parsed, 0, -3), 1 , 3);
+
+        $lat = $dLat + $hLat / 60;
+        $lng = $dLng + $hLng / 60;
+
+        if(strpos($location, 'S') !== false) {
+            $lat = -$lat;
+        }
+
+        if(strpos($location, 'W') !== false) {
+            $lng = -$lng;
+        }
+
+        return [$lat, $lng];
     }
 
     /**
@@ -149,4 +162,3 @@ class RocketRoute
         return new SoapClient($wsdl);
     }
 }
-
