@@ -27,7 +27,7 @@ You can then access the project on [http://localhost:8080](http://localhost:8080
 First you need to SSH inside the virtual machine:
 
 ```
-cd projectDir
+cd notam
 vagrant ssh
 ```
 
