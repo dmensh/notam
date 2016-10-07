@@ -13,7 +13,7 @@ git clone https://github.com/dmensh/notam.git
 the following:
 
 ```
-cd rocket
+cd notam
 vagrant up
 ```
 
