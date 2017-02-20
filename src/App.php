@@ -46,15 +46,15 @@ class App extends Application
      */
     protected function defineRoutes()
     {
-        $this->post('/', function(Request $request) {
-            $code = $request->request->get('code', '');
-            if(strlen($code) != 4) {
+        $this->get('/', function(Request $request) {
+            $icao = $request->get('icao', '');
+            if(strlen($icao) != 4) {
                 throw new \InvalidArgumentException("ICAO code should have exactly 4 characters");
             }
 
             /** @var RocketRoute $api */
             $api = $this['rocketRoute'];
-            return $this->json($api->searchNotam($code));
+            return $this->json($api->searchNotam($icao));
         });
     }
 }

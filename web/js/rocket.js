@@ -16,36 +16,33 @@ define(['jquery', 'gmaps', 'sweetalert'], function ($, GMaps, sweetAlert) {
             this.input = this.buildInputControl();
         },
 
-        onInputChange: function() {
-            var val = this.input.val();
+        getNotamsByICAO: function(icao) {
+            // clear markers
             this.map.removeMarkers();
 
-            if(val.length != 4) {
-                sweetAlert("ICAO code must be exactly 4 characters long");
-                return;
+            // validate
+            if(icao.length != 4) {
+                sweetAlert("ICAO code has exactly 4 characters. Please enter a valid ICAO code.");
+                return false;
             }
 
-            $.post('/api.php', {code: val})
-                .done(this.renderData.bind(this))
+            // get notams
+            return $.get('/api.php', {icao: icao})
+                .done(this.renderNOTAMsOnMap.bind(this))
                 .fail(function() {
                     sweetAlert("There was an error connecting to the API");
                 })
         },
 
-        renderData: function(data) {
+        renderNOTAMsOnMap: function(data) {
             if (data.length == 0) {
                 sweetAlert("No NOTAM entries found");
                 return;
             }
 
             for(var i in data) {
-                var item = data[i];
-                this.buildMarker(
-                    item.lat,
-                    item.lng,
-                    item.description,
-                    i == 0
-                );
+                var notam = data[i];
+                this.buildMarker( notam.lat, notam.lng, notam.description);
             }
 
             this.map.fitZoom();
@@ -55,25 +52,32 @@ define(['jquery', 'gmaps', 'sweetalert'], function ($, GMaps, sweetAlert) {
         },
 
         buildInputControl: function() {
-            var inputControl = this.map.addControl({
+            var scope = this;
+
+            // add text control
+            this.map.addControl({
                 position: 'top_center',
-                content: $('<input>')
-                    .attr('id', 'icao')
-                    .attr('type', 'text')
-                    .attr('placeholder', "Enter Code")
-                    .get(0),
+                content: $('<input/>').attr({ type: 'text', id: 'icao_input', name: 'icao', maxlength: 4, 'placeholder': "Enter ICAO" }).get(0),
                 style: {
-                    margin: '5px',
                     padding: '5px',
-                    border: 'solid 1px #717B87',
                     background: '#fff'
-                },
-                events: {
-                    change: this.onInputChange.bind(this)
                 }
             });
 
-            return $(inputControl).find('input');
+            // add button control
+            this.map.addControl({
+                position: 'top_center',
+                content: $('<input/>').attr({ type: 'button', id: 'button_input', value: 'Show NOTAMs' }).get(0),
+                style: {
+                    padding: '5px',
+                    background: '#fff'
+                },
+                events: {
+                    click: function(){
+                        scope.getNotamsByICAO($("#icao_input").val());
+                    }
+                }
+            });
         },
 
         buildMarker: function(lat, lng, description, show) {
@@ -90,7 +94,7 @@ define(['jquery', 'gmaps', 'sweetalert'], function ($, GMaps, sweetAlert) {
                                 'background:none',
                                 'margin:0',
                                 'padding:0',
-                                'border:none',
+                                'border:none'
                             ].join(';'))
                     ).html()
                 }

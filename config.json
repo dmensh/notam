@@ -2,7 +2,7 @@
     "debug": true,
     "rocketRouteConfig": {
         "notamWsdl": "https://api.rocketroute.com/notam/v1/service.wsdl",
-        "user": "user@example.com",
-        "password": "password"
+        "user": "menshykov@gmail.com",
+        "password": "apollo17dms"
     }
 }

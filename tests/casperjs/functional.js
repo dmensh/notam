@@ -2,13 +2,13 @@ casper.test.begin('Testing NOTAM lookup', 2, function(test){
     casper.start('http://localhost');
 
     casper.then(function(){
-        test.assertTitle('Rocket Route', 'Page has correct title');
+        test.assertTitle('RocketRoute NOTAM', 'Page has correct title');
     });
 
     casper.then(function() {
         this.echo("Waiting for map to load");
         this.wait(3000, function() {
-            this.sendKeys('#icao', 'KJFK');
+            this.sendKeys('#icao_input', 'KJFK');
             this.page.sendEvent("keypress", this.page.event.key.Enter);
             this.echo("Filled in ICAO field");
         });

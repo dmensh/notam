@@ -6,6 +6,7 @@ use DOMDocument;
 use DOMNode;
 use SoapClient;
 use Exception;
+use Rocket\Task\Helpers;
 
 /**
  * RocketRoute API
@@ -68,51 +69,26 @@ class RocketRoute
             }
 
             $location = substr($location, 0, 11);
-            list($lat, $lng) = $this->decodeCoordinate($location);
 
-            $locations[] = [
-                'lat' => $lat,
-                'lng' => $lng,
-                'description' => $description
-            ];
+            list($lat, $lng) = Helpers::decodeCoordinate($location);
+            $lat = round($lat, 3);
+            $lng = round($lng, 3);
+
+            if (isset($locations[$lat . '*' . $lng])) {
+                $locations[$lat . '*' . $lng]['description'] .= "\n\n". $description;
+            } else {
+                $locations[$lat . '*' . $lng] = [
+                    'lat' => $lat,
+                    'lng' => $lng,
+                    'description' => $description
+                ];
+            }
+
         }
+
+        sort($locations);
 
         return $locations;
-    }
-
-    /**
-     * Convert coordinate to latitude and longitude
-     *
-     * @param string $location
-     * @return array
-     */
-    protected function decodeCoordinate($location)
-    {
-        $parsed = $location;
-
-        $dLat = substr($location , 0 , 2);
-        $hLat = substr($location , 2 , 2 );
-
-        $parsed = substr($location, 4);
-        if (is_numeric(substr($location,-3))) {
-            $parsed = substr($parsed, 0, -3);
-        }
-
-        $hLng = substr(substr($parsed, -3), 0 , -1);
-        $dLng = substr(substr($parsed, 0, -3), 1 , 3);
-
-        $lat = $dLat + $hLat / 60;
-        $lng = $dLng + $hLng / 60;
-
-        if(strpos($location, 'S') !== false) {
-            $lat = -$lat;
-        }
-
-        if(strpos($location, 'W') !== false) {
-            $lng = -$lng;
-        }
-
-        return [$lat, $lng];
     }
 
     /**
